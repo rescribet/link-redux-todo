@@ -1,0 +1,41 @@
+{
+  "name": "link-redux-todomvc",
+  "version": "1.0.0",
+  "description": "A todo-app in link-redux",
+  "main": "index.js",
+  "author": "Fletche91 <thomvankalkeren@gmail.com>",
+  "license": "GPL",
+  "private": false,
+  "scripts": {
+    "build": "webpack",
+    "deploy": "gh-pages -d ./dist"
+  },
+  "dependencies": {
+    "classnames": "^2.2.5",
+    "director": "^1.2.8",
+    "immutable": "^3.8.2",
+    "link-lib": "^1.0.0-beta14",
+    "link-redux": "^1.0.0-beta22",
+    "rdflib": "^0.16.7",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-redux": "^5.0.7",
+    "redux-immutable": "^4.0.0",
+    "todomvc-app-css": "^2.1.0",
+    "todomvc-common": "^1.0.4",
+    "url-template": "^2.0.8"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.40",
+    "@babel/core": "^7.0.0-beta.40",
+    "@babel/plugin-transform-react-jsx": "^7.0.0-beta.40",
+    "@babel/preset-env": "^7.0.0-beta.40",
+    "babel-loader": "8.0.0-beta.2",
+    "babel-polyfill": "^6.26.0",
+    "copy-webpack-plugin": "^4.5.1",
+    "gh-pages": "^1.1.0",
+    "redux-devtools-extension": "^2.13.2",
+    "webpack": "^4.0.0",
+    "webpack-cli": "^2.0.9"
+  }
+}
