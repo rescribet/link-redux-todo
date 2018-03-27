@@ -26,5 +26,10 @@ module.exports = {
             { from: './node_modules/todomvc-common/base.css', to: './css/' },
             { from: './node_modules/todomvc-app-css/index.css', to: './css/' },
         ]),
-    ]
+    ],
+    externals: {
+        jsonld: 'jsonld',
+        'node-fetch': 'fetch',
+        'solid-auth-client': 'solid-auth-client',
+    }
 }

@@ -7,7 +7,7 @@
   "license": "GPL",
   "private": false,
   "scripts": {
-    "build": "webpack",
+    "build": "webpack -p",
     "deploy": "gh-pages -d ./dist"
   },
   "dependencies": {
