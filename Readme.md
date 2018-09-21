@@ -1,6 +1,6 @@
 # Link-Redux TODO
 
-This is an example React TODO application for Link-redux.
+This is an example React TODO application for [Link-redux](https://github.com/fletcher91/link-redux). Check out the [online demo](https://fletcher91.github.io/link-redux-todo/#/).
 
 The example is currently serverless, which isn't a realistic scenario, so data
 processing is done client-side which is a bit cumbersome.
