@@ -1,8 +1,12 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
+
+const production = process.env.NODE_ENV === 'production';
 
 module.exports = {
     entry: ['babel-polyfill', './src/app.jsx'],
-    mode: "development",
+    mode: production ? 'production' : 'development',
+    devtool: 'source-map',
     resolve: {
         extensions: ['.js', '.jsx']
     },
@@ -14,7 +18,10 @@ module.exports = {
               use: {
                 loader: 'babel-loader',
                 options: {
-                    plugins: ['@babel/plugin-transform-react-jsx'],
+                    plugins: [
+                      '@babel/plugin-transform-react-jsx',
+                      '@babel/plugin-proposal-class-properties',
+                    ],
                     presets: ['@babel/preset-env']
                 }
               }
@@ -26,10 +33,15 @@ module.exports = {
             { from: './node_modules/todomvc-common/base.css', to: './css/' },
             { from: './node_modules/todomvc-app-css/index.css', to: './css/' },
         ]),
+        new webpack.DefinePlugin({
+          FRONTEND_ROUTE: production
+            ? JSON.stringify('https://fletcher91.github.io/link-redux-todo/')
+            : JSON.stringify('http://localhost:8000/'),
+        }),
     ],
     externals: {
-        jsonld: 'jsonld',
+        jsonld: '{}',
         'node-fetch': 'fetch',
-        'solid-auth-client': 'solid-auth-client',
+        'solid-auth-client': 'self.fetch',
     }
 }

@@ -5,17 +5,15 @@ import {
 	linkReducer as linkedObjects,
 	RenderStoreProvider,
 } from 'link-redux';
-import { NamedNode } from 'rdflib';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { compose, createStore, applyMiddleware } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
 import { combineReducers } from 'redux-immutable';
 
 import LRS from './LRS';
 
-import TodoItem, { TodoItem as TodoComp} from './views/todoItem';
+import TodoItem from './views/todoItem';
 import TodoList from './views/TodoList';
 
 LRS.registerAll([
@@ -37,7 +35,7 @@ class TodoApp extends React.Component {
 	render() {
 		return (
 			<Provider store={store} >
-				<RenderStoreProvider linkedRenderStore={LRS} >
+				<RenderStoreProvider value={LRS} >
 					<LinkedResourceContainer subject={namedNodeByIRI(window.location.href)} />
 				</RenderStoreProvider>
 			</Provider>
