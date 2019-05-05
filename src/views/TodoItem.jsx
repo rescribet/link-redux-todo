@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { register } from 'link-redux';
 import React, { Component } from 'react';
 
-import { actionIRI, NS } from '../LRS';
+import { NS } from '../LRS';
 
 const ESCAPE_KEY = 27;
 const ENTER_KEY = 13;
@@ -32,8 +32,7 @@ class TodoItem extends Component {
 			editText: null,
 		});
 		if (e.which === ENTER_KEY) {
-
-			lrs.exec(actionIRI(subject, 'update', { text: e.target.value }));
+			lrs.actions.todo.update(subject, e.target.value);
 		}
 	}
 
@@ -54,10 +53,10 @@ class TodoItem extends Component {
 						checked={completed.value === "1"}
 						// This too, we'd get from the server as a `http://schema.org/potentialAction` property
 						// (yes, the same model as gmail actions).
-						onChange={() => lrs.exec(actionIRI(subject, 'toggle'))}
+						onChange={() => lrs.actions.todo.toggle(subject)}
 					/>
 					<label onDoubleClick={() => this.setState({ editing: true })}>{text.value}</label>
-					<button className="destroy" onClick={() => lrs.exec(actionIRI(subject, 'remove'))} />
+					<button className="destroy" onClick={() => lrs.actions.todo.remove(subject)} />
 				</div>
 				<input
 					className={"edit"}

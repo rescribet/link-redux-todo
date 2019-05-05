@@ -1,7 +1,7 @@
 import { LinkedResourceContainer, register } from 'link-redux';
 import React from 'react';
 
-import { actionIRI, NS } from '../LRS'
+import { NS } from '../LRS'
 
 const ENTER_KEY = 13;
 
@@ -36,7 +36,7 @@ class TodoList extends React.PureComponent {
 		const val = event.target.value.trim();
 
 		if (val) {
-			this.props.lrs.exec(actionIRI(undefined, 'create', { text: val }))
+			this.props.lrs.actions.todo.create(val);
 			event.target.value = "";
 		}
 	}
@@ -47,7 +47,7 @@ class TodoList extends React.PureComponent {
 		let clearButton = null;
 		if (completedCount.value >= 0) {
 			clearButton = (
-				<button className="clear-completed" onClick={() => lrs.exec(actionIRI(undefined, 'clearComplete'))}>
+				<button className="clear-completed" onClick={lrs.actions.todo.clearCompleted}>
 					Clear completed
 				</button>
 			);

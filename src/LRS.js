@@ -1,28 +1,22 @@
 import { createStore } from 'link-lib'
 
+import logging from './middleware/logging'
 import todoMiddleware from './middleware/todo';
 
+// A left-over todo-mvc quirk
 if (!window.app) {
 	window.app = {};
 }
 var app = window.app;
 
 app.LRS = createStore({}, [
+	logging(),
 	todoMiddleware,
 ]);
 
 export const NS = app.LRS.namespaces;
 
-// We do this manually now, but real-world would abstract this into the data via declarative forms.
-export function actionIRI(subject, action, payload = {}) {
-	const query = [
-		subject && `iri=${subject.value}`,
-		Object.entries(payload).map(([k, v]) => [k, encodeURIComponent(v)].join('=')),
-	].join('&');
-
-	return NS.app(`todo/${action}?${query}`);
-}
-
+// Fix an issue due to github pages serving html
 app.LRS.api.registerTransformer(
 	() => [],
 	'text/html',
