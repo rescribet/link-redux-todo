@@ -160,7 +160,7 @@ const todoMiddleware = (store) => {
 
 
 		if (iri.value.startsWith(NS.app('todo/remove').value)) {
-			return processDeltaNow(removeTODO(subject));
+			return removeTODO(subject);
 		}
 
 		if (iri.value.startsWith(NS.app('todo/toggle').value)) {
