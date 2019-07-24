@@ -2,16 +2,23 @@ import {
 	LinkedResourceContainer,
 	RenderStoreProvider,
 } from 'link-redux';
-import { NamedNode } from 'rdflib';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 import LRS from './LRS';
 
+import FileSelector from './components/FileSelector'
+
+import ErrorResource from './views/ErrorResource'
+import LoadingResource from './views/LoadingResource'
+import Resource from './views/Resource'
 import TodoItem from './views/todoItem';
 import TodoList from './views/TodoList';
 
 LRS.registerAll([
+	...Resource,
+	...ErrorResource,
+	...LoadingResource,
 	...TodoItem,
 	...TodoList,
 ]);
@@ -20,14 +27,33 @@ app.ALL_TODOS = 'all';
 app.ACTIVE_TODOS = 'active';
 app.COMPLETED_TODOS = 'completed';
 
-class TodoApp extends React.Component {
-	render() {
-		return (
-			<RenderStoreProvider value={LRS} >
-				<LinkedResourceContainer subject={NamedNode.find(window.location.href)} />
-			</RenderStoreProvider>
-		);
-	}
+const TodoApp = () => {
+	const [ todoList, setTodoList ] = React.useState("");
+
+	const todoComponent = todoList
+		? <LinkedResourceContainer subject={todoList} />
+		: (
+			<p
+				className="TodoMessage"
+				style={{
+					fontStyle: 'italic',
+					padding: '10px',
+					textAlign: 'center',
+				}}
+			>
+				Enter a file above and click open
+			</p>
+		)
+
+	return (
+		<RenderStoreProvider value={LRS} >
+			<FileSelector
+				onOpen={setTodoList}
+				value={todoList?.value}
+			/>
+			{todoComponent}
+		</RenderStoreProvider>
+	);
 }
 
 history.pushState(undefined, undefined, '#/');

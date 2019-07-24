@@ -7,14 +7,19 @@ import { NS } from '../LRS';
 const ESCAPE_KEY = 27;
 const ENTER_KEY = 13;
 
-const TodoItem = ({ completed, subject, text }) => {
+const TodoItem = ({
+  completed,
+  subject,
+  text,
+  todoList,
+}) => {
   const lrs = useLRS();
   const [editing, setEditing] = React.useState(false);
   const [editText, setEditText] = React.useState(null);
 
 
   const className = classNames({
-    completed: completed.value === "1",
+    completed: completed?.value === "true",
     editing,
   })
 
@@ -27,7 +32,7 @@ const TodoItem = ({ completed, subject, text }) => {
     setEditText(null);
 
     if (e.which === ENTER_KEY) {
-      lrs.actions.todo.update(subject, e.target.value);
+      lrs.actions.todo.update(todoList, subject, e.target.value);
     }
   }
 
@@ -37,10 +42,10 @@ const TodoItem = ({ completed, subject, text }) => {
         <input
           className="toggle"
           type="checkbox"
-          checked={completed.value === "1"}
+          checked={completed?.value === "true"}
           // This too, we'd get from the server as a `http://schema.org/potentialAction` property
           // (yes, the same model as gmail actions).
-          onChange={() => lrs.actions.todo.toggle(subject)}
+          onChange={() => lrs.actions.todo.toggle(todoList, subject)}
         />
         <label onDoubleClick={() => setEditing(true)}>{text.value}</label>
         <button className="destroy" onClick={() => lrs.actions.todo.remove(subject)} />

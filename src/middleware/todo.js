@@ -15,15 +15,16 @@ import { NS } from '../LRS'
  *
  * @see https://github.com/ontola/linked-delta for definitions (they're pretty obvious though).
  */
-const add = defaultNS.ll('add');
+const addGraph = (graph) => defaultNS.ll(`add?graph=${encodeURIComponent(graph.value)}`);
 const replace = defaultNS.ll('replace');
+const replaceGraph = (graph) => defaultNS.ll(`replace?graph=${encodeURIComponent(graph.value)}`);
 
 // We build IRI's manually here, but real-world would abstract this into the data via declarative forms.
 function actionIRI(subject, action, payload = {}) {
 	const query = [
 		subject && `iri=${subject.value}`,
-		Object.entries(payload).map(([k, v]) => [k, encodeURIComponent(v)].join('=')),
-	].join('&');
+		...Object.entries(payload).map(([k, v]) => [k, encodeURIComponent(v)].join('=')),
+	].filter(Boolean).join('&');
 
 	return NS.app(`todo/${action}?${query}`);
 }
@@ -39,57 +40,51 @@ const todoMiddleware = (store) => {
 	]);
 
 	const processDeltaNow = (delta) => {
-		store.processDelta(delta, true);
+		return store.processDelta(delta, true);
 	}
 
-	// Since we don't have a server, we create our own data by mocking the initial response.
-	store.processDelta([
-		// Homepage
-		[NS.app('#/'), NS.rdf('type'), NS.app('TodoList'), add],
-		[NS.app('#/'), NS.rdf('type'), NS.rdfs('Bag'), add],
-		[NS.app('#/'), NS.schema('name'), new Literal("todos"), add],
-		[NS.app('#/'), NS.app('completedCount'), Literal.fromValue(1), add],
-		[NS.app('#/'), NS.rdfs('member'), NS.app('todos/1'), add],
-		[NS.app('#/'), NS.rdfs('member'), NS.app('todos/2'), add],
-		[NS.app('#/'), NS.schema('potentialAction'), NS.app('actions/new'), add],
+	const namespaceForList = (listIRI) => Namespace(`${listIRI.value}#`);
 
-		// Create action
-		[NS.app('actions/new'), NS.rdf('type'), NS.schema('CreateAction'), add],
-		[NS.app('actions/new'), NS.schema('object'), NS.app('actions/new/entry'), add],
+	const createTODOList = (listIRI) => {
+		const todoNS = namespaceForList(listIRI);
 
-		[NS.app('actions/new/entry'), NS.rdf('type'), NS.schema('EntryPoint'), add],
-		[NS.app('actions/new/entry'), NS.schema('httpMethod'), new Literal('POST'), add],
-		[NS.app('actions/new/entry'), NS.schema('urlTemplate'), new Literal('EntryPoint'), add],
+		return [
+			[listIRI, NS.rdf('type'), NS.app('TodoList'), addGraph(listIRI)],
+			[listIRI, NS.rdf('type'), NS.rdfs('Bag'), addGraph(listIRI)],
+			[listIRI, NS.schema('name'), new Literal("todos"), addGraph(listIRI)],
+			[listIRI, NS.app('completedCount'), Literal.fromValue(1), addGraph(listIRI)],
+			[listIRI, NS.schema('potentialAction'), NS.app('actions/new'), addGraph(listIRI)],
 
-		// First todo
-		[NS.app('todos/1'), NS.rdf('type'), NS.app('TodoItem'), add],
-		[NS.app('todos/1'), NS.schema('text'), new Literal('Something to do'), add],
-		[NS.app('todos/1'), NS.app('completed'), Literal.fromValue(false), add],
+			// Create action
+			[todoNS('actions/new'), NS.rdf('type'), NS.schema('CreateAction'), addGraph(listIRI)],
+			[todoNS('actions/new'), NS.schema('object'), todoNS('actions/new/entry'), addGraph(listIRI)],
 
-		// Second todo
-		[NS.app('todos/2'), NS.rdf('type'), NS.app('TodoItem'), add],
-		[NS.app('todos/2'), NS.schema('text'), new Literal('This has been done'), add],
-		[NS.app('todos/2'), NS.app('completed'), Literal.fromValue(true), add],
-	]);
+			[todoNS('actions/new/entry'), NS.rdf('type'), NS.schema('EntryPoint'), addGraph(listIRI)],
+			[todoNS('actions/new/entry'), NS.schema('httpMethod'), new Literal('POST'), addGraph(listIRI)],
+			[todoNS('actions/new/entry'), NS.schema('urlTemplate'), new Literal('EntryPoint'), addGraph(listIRI)],
+		];
+	}
 
 	// Normally, we'd define functions that transition our _application state_ here (dialogs, modals,
 	// etc), but we'll implement the transitions the server would normally return (why implement logic twice?).
-	const createTODO = (text) => {
+	const createTODO = (listIRI, text) => {
 		const newTodo = new BlankNode();
+
 		return [
-			[newTodo, NS.rdf('type'), NS.app('TodoItem'), add],
-			[newTodo, NS.schema('text'), new Literal(text), add],
-			[newTodo, NS.app('completed'), Literal.fromValue(false), add],
-			[NS.app('#/'), NS.rdfs('member'), newTodo, add],
+			[newTodo, NS.rdf('type'), NS.app('TodoItem'), addGraph(listIRI)],
+			[newTodo, NS.schema('text'), new Literal(text), addGraph(listIRI)],
+			// We use string false here due to a bug in the parser/serializer
+			[newTodo, NS.app('completed'), new Literal("false"), addGraph(listIRI)],
+			[listIRI, NS.rdfs('member'), newTodo, addGraph(listIRI)],
 		];
 	};
 
-	const toggleCompleted = (subject) => {
+	const toggleCompleted = (listIRI, subject) => {
 		const completed = store.getResourceProperty(subject, NS.app('completed'));
 
-		const next = Literal.fromValue(completed.value === '0');
+		const next = Literal.fromValue(completed?.value === 'true' ? 'false' : 'true');
 		return [
-			[subject, NS.app('completed'), next, replace],
+			[subject, NS.app('completed'), next, replaceGraph(listIRI)],
 		];
 	};
 
@@ -102,8 +97,8 @@ const todoMiddleware = (store) => {
 		store.broadcastWithExpedite(true);
 	};
 
-	const updateText = (subject, text) => [
-			[subject, NS.schema('text'), Literal.fromValue(text), replace],
+	const updateText = (listIRI, subject, text) => [
+			[subject, NS.schema('text'), Literal.fromValue(text), replaceGraph(listIRI)],
 	];
 
 	/**
@@ -114,11 +109,17 @@ const todoMiddleware = (store) => {
 	 * data changes will be made by the middleware handler below.
 	 */
 	store.actions.todo = {};
-	store.actions.todo.create = (text) => store.exec(actionIRI(undefined, 'create', { text }));
-	store.actions.todo.update = (subject, text) => store.exec(actionIRI(subject, 'update', { text }));
-	store.actions.todo.toggle = (subject) => store.exec(actionIRI(subject, 'toggle'));
+	store.actions.todo.create = (todoList, text) => store.exec(actionIRI(
+		undefined,
+		'create',
+		{ todoList: todoList.value, text }
+	));
+	store.actions.todo.update = (todoList, subject, text) => store.exec(actionIRI(subject, 'update', { todoList: todoList.value, text }));
+	store.actions.todo.toggle = (todoList, subject) => store.exec(actionIRI(subject, 'toggle', { todoList: todoList.value }));
 	store.actions.todo.remove = (subject) => store.exec(actionIRI(subject, 'remove'));
 	store.actions.todo.clearCompleted = () => store.exec(actionIRI(undefined, 'clearComplete'));
+	store.actions.todo.initialize = (subject) => store.exec(actionIRI(subject, 'initialize'));
+	store.actions.todo.save = (subject) => store.exec(actionIRI(subject, 'save'));
 
 	/**
 	 * Middleware handler
@@ -129,8 +130,9 @@ const todoMiddleware = (store) => {
 		}
 
 		if (iri.value.startsWith(NS.app('todo/create').value)) {
+			const todoList = new NamedNode(new URL(iri.value).searchParams.get('todoList'));
 			const text = new URL(iri.value).searchParams.get('text');
-			return processDeltaNow(createTODO(decodeURIComponent(text)));
+			return processDeltaNow(createTODO(todoList, decodeURIComponent(text)));
 		}
 
 		/**
@@ -141,7 +143,7 @@ const todoMiddleware = (store) => {
 		if (iri.value.startsWith(NS.app('todo/clearComplete').value)) {
 			const completed = store
 				.store
-				.match(null, NS.app('completed'), Literal.fromValue(true)) // Match every completed resource
+				.match(null, NS.app('completed'), new Literal("true")) // Match every completed resource
 
 			completed
 				.map((stmt) => store.store.statementsFor(stmt.subject)) // Get the resources
@@ -164,12 +166,26 @@ const todoMiddleware = (store) => {
 		}
 
 		if (iri.value.startsWith(NS.app('todo/toggle').value)) {
-			return processDeltaNow(toggleCompleted(subject));
+			const todoList = new NamedNode(new URL(iri.value).searchParams.get('todoList'));
+			return processDeltaNow(toggleCompleted(todoList, subject));
 		}
 
 		if (iri.value.startsWith(NS.app('todo/update').value)) {
+			const todoList = new NamedNode(new URL(iri.value).searchParams.get('todoList'));
 			const text = new URL(iri.value).searchParams.get('text');
-			return processDeltaNow(updateText(subject, decodeURIComponent(text)));
+			return processDeltaNow(updateText(todoList, subject, decodeURIComponent(text)));
+		}
+
+		if (iri.value.startsWith(NS.app('todo/initialize').value)) {
+			const todoList = new NamedNode(new URL(iri.value).searchParams.get('iri'));
+
+			return store.processDelta(createTODOList(todoList))
+				.then(() => store.api.fetcher.putBack(todoList));
+		}
+
+		if (iri.value.startsWith(NS.app('todo/save').value)) {
+			const resource = new URL(iri.value).searchParams.get('iri');
+			return store.api.fetcher.putBack(new NamedNode(resource));
 		}
 
 			return next(iri, opts);

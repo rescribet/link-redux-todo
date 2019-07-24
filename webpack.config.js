@@ -21,6 +21,7 @@ module.exports = {
                     plugins: [
                       '@babel/plugin-transform-react-jsx',
                       '@babel/plugin-proposal-class-properties',
+                      '@babel/plugin-proposal-optional-chaining',
                     ],
                     presets: ['@babel/preset-env']
                 }
@@ -42,6 +43,5 @@ module.exports = {
     externals: {
         jsonld: '{}',
         'node-fetch': 'fetch',
-        'solid-auth-client': 'self.fetch',
     }
 }
