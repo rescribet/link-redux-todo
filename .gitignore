@@ -1,5 +1,6 @@
 dist/main.js
 dist/main.js.map
-dist/css
+dist/css/base.css
+dist/css/index.css
 node_modules/
 .idea
