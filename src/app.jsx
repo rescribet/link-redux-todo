@@ -6,7 +6,7 @@ import { NamedNode } from 'rdflib';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Route, Router, Switch } from 'react-router'
-import { createBrowserHistory } from 'history';
+import { BrowserRouter } from 'react-router-dom'
 
 import LRS from './LRS';
 
@@ -30,8 +30,6 @@ LRS.registerAll([
 app.ALL_TODOS = 'all';
 app.ACTIVE_TODOS = 'active';
 app.COMPLETED_TODOS = 'completed';
-
-const history = createBrowserHistory();
 
 const TodoApp = () => {
   const Text = ({ location }) => {
@@ -58,14 +56,16 @@ const TodoApp = () => {
     )
   }
 
+  const pathname = new URL(FRONTEND_ROUTE).pathname;
+
   return (
     <RenderStoreProvider value={LRS} >
-      <Router history={history}>
+      <BrowserRouter basename={pathname.endsWith('/') ? pathname.slice(0, -1) : pathname}>
         <FileSelector />
         <Switch>
           <Route key="resource" path="*" component={Text} />
         </Switch>
-      </Router>
+      </BrowserRouter>
     </RenderStoreProvider>
   );
 }

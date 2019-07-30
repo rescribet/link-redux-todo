@@ -30,9 +30,8 @@ function actionIRI(subject, action, payload = {}) {
 }
 
 const todoMiddleware = (store) => {
-	// Register our namespace, this will contain app-specific models (we could use any RDF todo model,
-	// but this is a demo, so keep it simple). See the webpack config for the value.
-	store.namespaces.app = new Namespace(FRONTEND_ROUTE);
+	// Register our namespace, this will contain app-specific models (we could use any RDF todo model)
+	store.namespaces.app = new Namespace("https://fletcher91.github.io/link-redux-todo/");
 	const NS = store.namespaces;
 
 	store.addOntologySchematics([
