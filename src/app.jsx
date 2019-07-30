@@ -1,64 +1,76 @@
 import {
-	LinkedResourceContainer,
-	RenderStoreProvider,
+  LinkedResourceContainer,
+  RenderStoreProvider,
 } from 'link-redux';
+import { NamedNode } from 'rdflib';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Route, Router, Switch } from 'react-router'
+import { createBrowserHistory } from 'history';
 
 import LRS from './LRS';
 
 import FileSelector from './components/FileSelector'
-
+import Container from './views/Container'
 import ErrorResource from './views/ErrorResource'
 import LoadingResource from './views/LoadingResource'
 import Resource from './views/Resource'
-import TodoItem from './views/todoItem';
+import TodoItem from './views/TodoItem';
 import TodoList from './views/TodoList';
 
 LRS.registerAll([
-	...Resource,
-	...ErrorResource,
-	...LoadingResource,
-	...TodoItem,
-	...TodoList,
+  ...Container,
+  ...Resource,
+  ...ErrorResource,
+  ...LoadingResource,
+  ...TodoItem,
+  ...TodoList,
 ]);
 
 app.ALL_TODOS = 'all';
 app.ACTIVE_TODOS = 'active';
 app.COMPLETED_TODOS = 'completed';
 
+const history = createBrowserHistory();
+
 const TodoApp = () => {
-	const [ todoList, setTodoList ] = React.useState("");
+  const Text = ({ location }) => {
+    const resource = new URLSearchParams(location.search).get('resource');
 
-	const todoComponent = todoList
-		? <LinkedResourceContainer subject={todoList} />
-		: (
-			<p
-				className="TodoMessage"
-				style={{
-					fontStyle: 'italic',
-					padding: '10px',
-					textAlign: 'center',
-				}}
-			>
-				Enter a file above and click open
-			</p>
-		)
+    if(!resource) {
+      return (
+        <p
+          className="TodoMessage"
+          style={{
+            fontStyle: 'italic',
+            padding: '10px',
+            textAlign: 'center',
+          }}
+        >
+          Enter a file or directory above and click open
+        </p>
+      );
+    }
 
-	return (
-		<RenderStoreProvider value={LRS} >
-			<FileSelector
-				onOpen={setTodoList}
-				value={todoList?.value}
-			/>
-			{todoComponent}
-		</RenderStoreProvider>
-	);
+    LRS.getEntity(new NamedNode(resource), { reload: true })
+    return (
+      <LinkedResourceContainer subject={new NamedNode(resource)} />
+    )
+  }
+
+  return (
+    <RenderStoreProvider value={LRS} >
+      <Router history={history}>
+        <FileSelector />
+        <Switch>
+          <Route key="resource" path="*" component={Text} />
+        </Switch>
+      </Router>
+    </RenderStoreProvider>
+  );
 }
 
-history.pushState(undefined, undefined, '#/');
-
 ReactDOM.render(
-	React.createElement(TodoApp),
-	document.getElementsByClassName('todoapp')[0]
+  React.createElement(TodoApp),
+  document.getElementsByClassName('todoapp')[0]
 );

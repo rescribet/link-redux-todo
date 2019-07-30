@@ -1,5 +1,5 @@
 import { createStore } from 'link-lib'
-import { Statement } from 'rdflib';
+import { Namespace, Statement } from 'rdflib';
 
 import logging from './middleware/logging'
 import solidMiddleware from './middleware/solid';
@@ -17,6 +17,7 @@ app.LRS = createStore({}, [
 	todoMiddleware,
 ]);
 
+app.LRS.namespaces.ldp = Namespace('http://www.w3.org/ns/ldp#');
 export const NS = app.LRS.namespaces;
 
 // Fix an issue due to github pages serving html
@@ -33,7 +34,8 @@ app.LRS.api.registerTransformer(
  * A feature to bump certain classes would be a good future addition.
  */
 app.LRS.addOntologySchematics([
-	new Statement(NS.app('TODOList'), NS.rdfs('subClassOf'), NS.link('Document'))
+	new Statement(NS.rdfs('Bag'), NS.rdfs('subClassOf'), NS.rdfs('Resource')),
+	new Statement(NS.app('TodoList'), NS.rdfs('subClassOf'), NS.rdfs('Bag')),
 ])
 app.LRS.api.accept.default = "text/turtle"
 
