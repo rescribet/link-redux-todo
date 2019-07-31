@@ -17,6 +17,7 @@
 
 .todoapp h1 {
     color: rgba(175, 47, 47, 0.25);
+    white-space: nowrap;
 }
 
 /* From https://loading.io/css/ */
