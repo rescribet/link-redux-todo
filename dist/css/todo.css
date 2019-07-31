@@ -11,6 +11,14 @@
     text-align: center;
 }
 
+.info {
+    color: #737373;
+}
+
+.todoapp h1 {
+    color: rgba(175, 47, 47, 0.25);
+    white-space: nowrap;
+}
 
 /* From https://loading.io/css/ */
 .lds-ring {
@@ -48,4 +56,32 @@
     100% {
         transform: rotate(360deg);
     }
+}
+
+.footer {
+    display: flex;
+    flex-direction: row-reverse;
+    height: auto;
+    padding: 0;
+}
+
+.clear-completed {
+    padding: .8em;
+    z-index: 1;
+}
+
+.save-pod {
+    background: #7C4DFF;
+    color: white;
+    cursor: pointer;
+    padding: .8em;
+    z-index: 1;
+}
+
+.BrowserList {
+    padding: 0;
+}
+
+.BrowserList li:nth-child(odd){
+    background-color: #dadada66;
 }

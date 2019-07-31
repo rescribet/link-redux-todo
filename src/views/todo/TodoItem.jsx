@@ -1,11 +1,9 @@
 import classNames from 'classnames';
 import { register, useLRS } from 'link-redux'
 import React from 'react';
+import { confirmKeyUpHandler } from '../../helpers/input'
 
-import { NS } from '../LRS';
-
-const ESCAPE_KEY = 27;
-const ENTER_KEY = 13;
+import { NS } from '../../LRS';
 
 const TodoItem = ({
   completed,
@@ -23,18 +21,11 @@ const TodoItem = ({
     editing,
   })
 
-  const handleKeyUp = (e) => {
-    if (![ESCAPE_KEY, ENTER_KEY].includes(e.which)) {
-      return;
-    }
-
-    setEditing(false);
-    setEditText(null);
-
-    if (e.which === ENTER_KEY) {
-      lrs.actions.todo.update(todoList, subject, e.target.value);
-    }
-  }
+  const handleKeyUp = confirmKeyUpHandler(
+    (value) => lrs.actions.todo.update(todoList, subject, value),
+    setEditing,
+    setEditText
+  )
 
   return (
     <li className={className}>
@@ -47,14 +38,20 @@ const TodoItem = ({
           // (yes, the same model as gmail actions).
           onChange={() => lrs.actions.todo.toggle(todoList, subject)}
         />
-        <label onDoubleClick={() => setEditing(true)}>{text.value}</label>
+        <label
+          style={{ minHeight: '1em' }}
+          onDoubleClick={() => setEditing(true)}
+        >
+          {text.value}
+        </label>
         <button className="destroy" onClick={() => lrs.actions.todo.remove(subject)} />
       </div>
       <input
+        autoFocus
         className={"edit"}
         onKeyUp={handleKeyUp}
         onChange={(e) => setEditText(e.target.value)}
-        value={editText || text.value}
+        value={editing ? editText : text.value}
       />
     </li>
   );

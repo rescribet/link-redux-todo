@@ -11,21 +11,9 @@ import { BrowserRouter } from 'react-router-dom'
 import LRS from './LRS';
 
 import FileSelector from './components/FileSelector'
-import Container from './views/Container'
-import ErrorResource from './views/ErrorResource'
-import LoadingResource from './views/LoadingResource'
-import Resource from './views/Resource'
-import TodoItem from './views/TodoItem';
-import TodoList from './views/TodoList';
+import views from './views/index'
 
-LRS.registerAll([
-  ...Container,
-  ...Resource,
-  ...ErrorResource,
-  ...LoadingResource,
-  ...TodoItem,
-  ...TodoList,
-]);
+LRS.registerAll(views);
 
 app.ALL_TODOS = 'all';
 app.ACTIVE_TODOS = 'active';

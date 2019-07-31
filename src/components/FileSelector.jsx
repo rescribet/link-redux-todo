@@ -28,7 +28,7 @@ const primaryDomainFromIRI = (iri) => {
   return url.origin.split('.').slice(-2).join('.');
 }
 
-const OPEN_DIR_MATCHER = /^.*:\/\/.*\/\w*(?<!\/$)(?!\w*\.\w*)$/i
+const OPEN_DIR_MATCHER = /(\w*((?!\/$)\/\w*))+$/i
 
 const normalizeLDPFile = (iri) => {
   try {

@@ -2,6 +2,7 @@ import React from 'react'
 
 const ButtonWithFeedback = ({
   children,
+  className,
   doneText,
   workingText,
   onClick,
@@ -24,9 +25,8 @@ const ButtonWithFeedback = ({
 
   return (
     <button
-      className="clear-completed"
+      className={className}
       disabled={working}
-      style={{ padding: '0 5px' }}
       onClick={() => {
         setWorking(true);
         try {

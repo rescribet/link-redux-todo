@@ -1,7 +1,7 @@
 import { register, useLRS } from 'link-redux'
 import React from 'react';
 
-import { NS } from '../LRS'
+import { NS } from '../../LRS'
 
 const messageStyle = {
 	padding: '1.0em',

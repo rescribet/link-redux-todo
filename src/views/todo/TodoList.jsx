@@ -1,9 +1,9 @@
 import { LinkedResourceContainer, register, useLRS } from 'link-redux'
-import React from 'react';
+import React from 'react'
 
-import ButtonWithFeedback from '../components/ButtonWithFeedback'
-
-import { NS } from '../LRS'
+import ButtonWithFeedback from '../../components/ButtonWithFeedback'
+import TodoHeader from '../../components/TodoHeader'
+import { NS } from '../../LRS'
 
 const ENTER_KEY = 13;
 
@@ -51,9 +51,7 @@ const TodoList = ({
 
 	return (
 		<div>
-			<header className="header">
-				<h1>{name.value}</h1>
-			</header>
+      <TodoHeader name={name} subject={subject} />
 			<input
 				className="new-todo"
 				placeholder="What needs to be done?"
@@ -71,7 +69,7 @@ const TodoList = ({
 			</ul>
 			<footer className="footer">
 				<ButtonWithFeedback
-					className="clear-completed"
+					className="save-pod"
 					doneText="Saved!"
 					workingText="Saving..."
 					onClick={() => lrs.actions.todo.save(subject).catch(handleSaveError)}

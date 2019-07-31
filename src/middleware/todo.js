@@ -100,6 +100,10 @@ const todoMiddleware = (store) => {
 			[subject, NS.schema('text'), Literal.fromValue(text), replaceGraph(listIRI)],
 	];
 
+	const updateTitle = (listIRI, title) => [
+			[listIRI, NS.schema('name'), Literal.fromValue(title), replaceGraph(listIRI)],
+  ]
+
 	/**
 	 * Create an object for our action dispatchers, this eases executing (application based) actions
 	 * It also creates a nice interface between components and the action IRI's for faster refactoring
@@ -113,6 +117,7 @@ const todoMiddleware = (store) => {
 		'create',
 		{ todoList: todoList.value, text }
 	));
+	store.actions.todo.updateTitle = (todoList, title) => store.exec(actionIRI(undefined, 'updateTitle', { todoList: todoList.value, title }));
 	store.actions.todo.update = (todoList, subject, text) => store.exec(actionIRI(subject, 'update', { todoList: todoList.value, text }));
 	store.actions.todo.toggle = (todoList, subject) => store.exec(actionIRI(subject, 'toggle', { todoList: todoList.value }));
 	store.actions.todo.remove = (subject) => store.exec(actionIRI(subject, 'remove'));
@@ -132,6 +137,12 @@ const todoMiddleware = (store) => {
 			const todoList = new NamedNode(new URL(iri.value).searchParams.get('todoList'));
 			const text = new URL(iri.value).searchParams.get('text');
 			return processDeltaNow(createTODO(todoList, decodeURIComponent(text)));
+		}
+
+		if (iri.value.startsWith(NS.app('todo/updateTitle').value)) {
+			const todoList = new NamedNode(new URL(iri.value).searchParams.get('todoList'));
+			const title = new URL(iri.value).searchParams.get('title');
+			return processDeltaNow(updateTitle(todoList, decodeURIComponent(title)));
 		}
 
 		/**
