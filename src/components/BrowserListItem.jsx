@@ -1,5 +1,6 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom'
+
+import Link from './Link'
 
 const style = {
   listStyle: 'none',
@@ -24,10 +25,10 @@ const BrowserListItem = ({
   to,
 }) => (
   <li style={style}>
-    <NavLink style={listStyle} to={to}>
+    <Link style={listStyle} to={to}>
       <span style={nameStyle} title={title} >{name}</span>
       {children}
-    </NavLink>
+    </Link>
   </li>
 );
 

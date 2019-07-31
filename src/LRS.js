@@ -18,6 +18,7 @@ app.LRS = createStore({}, [
 ]);
 
 app.LRS.namespaces.ldp = Namespace('http://www.w3.org/ns/ldp#');
+app.LRS.namespaces.vcard = Namespace('http://www.w3.org/2006/vcard/ns#');
 export const NS = app.LRS.namespaces;
 
 // Fix an issue due to github pages serving html

@@ -3,6 +3,8 @@ import { register, useLRS } from 'link-redux'
 import React from 'react';
 
 import { NS } from '../LRS'
+import { browserListTopology } from '../topologies/BrowserList'
+import { previewListTopology } from '../topologies/PreviewList'
 
 /**
  * The `error` prop will be present when an error was caught in the tree,
@@ -52,5 +54,11 @@ const ErrorResource = ({ error, linkRequestStatus: { status }, subject}) => {
 }
 
 ErrorResource.type = NS.ll('ErrorResource');
+
+ErrorResource.topology = [
+  undefined,
+  browserListTopology,
+  previewListTopology,
+];
 
 export default register(ErrorResource);

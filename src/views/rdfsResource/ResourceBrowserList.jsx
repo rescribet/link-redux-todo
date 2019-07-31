@@ -31,7 +31,7 @@ const ResourceBrowserList = ({
     <BrowserListItem
       name={displayName}
       title={subject.value}
-      to={`/?resource=${encodeURIComponent(subject.value)}`}
+      to={subject}
     >
         <Property label={NS.dc('modified')} />
     </BrowserListItem>
