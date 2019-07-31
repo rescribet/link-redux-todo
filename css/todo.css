@@ -85,3 +85,7 @@
 .BrowserList li:nth-child(odd){
     background-color: #dadada66;
 }
+
+.PreviewList {
+    margin: 1em;
+}
