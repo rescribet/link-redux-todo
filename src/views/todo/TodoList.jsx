@@ -1,9 +1,10 @@
+import { NamedNode, Namespace } from 'rdflib'
 import { LinkedResourceContainer, register, useLRS } from 'link-redux'
 import React from 'react'
 
 import ButtonWithFeedback from '../../components/ButtonWithFeedback'
 import TodoHeader from '../../components/TodoHeader'
-import { NS } from '../../LRS'
+import { DEFAULT_TOPOLOGY, defaultNS as NS } from 'link-lib'
 
 const ENTER_KEY = 13;
 
@@ -82,15 +83,22 @@ const TodoList = ({
 	);
 };
 
-TodoList.type = NS.app('TodoList');
+TodoList.type = Namespace("https://fletcher91.github.io/link-redux-todo/")('TodoList');
+
+TodoList.topology = [
+	undefined,
+	DEFAULT_TOPOLOGY,
+	new NamedNode.find("http://localhost:8080/article"),
+	new NamedNode.find("https://ontola-mash.herokuapp.com/article"),
+];
 
 TodoList.mapDataToProps = {
-	completedCount: NS.app('completedCount'),
+	completedCount: {label: Namespace("https://fletcher91.github.io/link-redux-todo/")('completedCount')},
 	member: {
 		label: NS.rdfs('member'),
 		limit: Infinity, // We want all members
 	},
-	name: NS.schema('name'),
+	name:{label:  NS.schema('name')},
 };
 
 export default register(TodoList);

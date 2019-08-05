@@ -1,0 +1,12 @@
+@prefix : <#>.
+@prefix rd: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix ll: <http://purl.org/link-lib/>.
+@prefix lin: <https://fletcher91.github.io/link-redux-todo/>.
+@prefix schem: <http://schema.org/>.
+@prefix n0: <https://fletcher91.github.io/link-redux-todo/actions/>.
+
+<>
+    a rd:Class, ll:InstallableComponent;
+    schem:name "Demo TODO app";
+    ll:npmLabel "link-redux-todomvc";
+    ll:npmVersion "2.13.0".

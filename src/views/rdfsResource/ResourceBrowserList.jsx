@@ -3,7 +3,7 @@ import { NamedNode } from 'rdflib';
 import React from 'react';
 import BrowserListItem from '../../components/BrowserListItem'
 
-import { NS } from '../../LRS'
+import { defaultNS as NS } from 'link-lib'
 import { browserListTopology } from '../../topologies/BrowserList'
 
 const retrieveFilename = (iri, folder) => {
@@ -43,7 +43,7 @@ ResourceBrowserList.type = NS.rdfs('Resource');
 ResourceBrowserList.topology = browserListTopology;
 
 ResourceBrowserList.mapDataToProps = {
-  name: [NS.schema('name'), NS.rdfs('label'), NS.dc('title'), NS.foaf('name')],
+  name: {label: [NS.schema('name'), NS.rdfs('label'), NS.dc('title'), NS.foaf('name')]},
 };
 
 ResourceBrowserList.linkOpts = { forceRender: true }

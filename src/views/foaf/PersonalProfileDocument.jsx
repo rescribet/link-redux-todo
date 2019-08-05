@@ -1,7 +1,7 @@
 import React from 'react';
 import { Property, register } from 'link-redux'
 
-import { NS } from '../../LRS'
+import { defaultNS as NS } from 'link-lib'
 
 const PersonalProfileDocument = () => <Property label={NS.foaf('primaryTopic')} />;
 

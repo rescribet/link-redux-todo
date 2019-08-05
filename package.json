@@ -1,6 +1,6 @@
 {
   "name": "link-redux-todomvc",
-  "version": "1.0.0",
+  "version": "2.12.2",
   "description": "A todo-app in link-redux",
   "main": "index.js",
   "author": "Fletche91 <thomvankalkeren@gmail.com>",

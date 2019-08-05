@@ -2,7 +2,7 @@ import * as statusCodes from 'http-status-codes';
 import { register, useLRS } from 'link-redux'
 import React from 'react';
 
-import { NS } from '../LRS'
+import { defaultNS as NS } from 'link-lib'
 import { browserListTopology } from '../topologies/BrowserList'
 import { previewListTopology } from '../topologies/PreviewList'
 

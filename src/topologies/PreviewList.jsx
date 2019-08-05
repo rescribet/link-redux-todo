@@ -1,9 +1,8 @@
+import { Namespace } from 'rdflib'
 import { TopologyProvider } from 'link-redux'
 import React from 'react';
 
-import { NS } from '../LRS'
-
-export const previewListTopology = NS.app('previewList');
+export const previewListTopology = Namespace("https://fletcher91.github.io/link-redux-todo/")('previewList');
 
 class PreviewList extends TopologyProvider {
   constructor(props) {

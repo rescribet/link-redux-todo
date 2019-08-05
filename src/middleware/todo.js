@@ -6,7 +6,6 @@ import {
 	Namespace,
 	Statement,
 } from 'rdflib'
-import { NS } from '../LRS'
 
 /**
  * Link-lib has been designed to process delta's. Every action on the server should return a description
@@ -19,20 +18,20 @@ const addGraph = (graph) => defaultNS.ll(`add?graph=${encodeURIComponent(graph.v
 const replace = defaultNS.ll('replace');
 const replaceGraph = (graph) => defaultNS.ll(`replace?graph=${encodeURIComponent(graph.value)}`);
 
-// We build IRI's manually here, but real-world would abstract this into the data via declarative forms.
-function actionIRI(subject, action, payload = {}) {
-	const query = [
-		subject && `iri=${subject.value}`,
-		...Object.entries(payload).map(([k, v]) => [k, encodeURIComponent(v)].join('=')),
-	].filter(Boolean).join('&');
-
-	return NS.app(`todo/${action}?${query}`);
-}
-
 const todoMiddleware = (store) => {
 	// Register our namespace, this will contain app-specific models (we could use any RDF todo model)
 	store.namespaces.app = new Namespace("https://fletcher91.github.io/link-redux-todo/");
 	const NS = store.namespaces;
+
+	// We build IRI's manually here, but real-world would abstract this into the data via declarative forms.
+	function actionIRI(subject, action, payload = {}) {
+		const query = [
+			subject && `iri=${subject.value}`,
+			...Object.entries(payload).map(([k, v]) => [k, encodeURIComponent(v)].join('=')),
+		].filter(Boolean).join('&');
+
+		return NS.app(`todo/${action}?${query}`);
+	}
 
 	store.addOntologySchematics([
 		new Statement(NS.app('#/'), NS.owl('sameAs'), NS.app('/')),
@@ -48,7 +47,7 @@ const todoMiddleware = (store) => {
 		const todoNS = namespaceForList(listIRI);
 
 		return [
-			[listIRI, NS.rdf('type'), NS.app('TodoList'), addGraph(listIRI)],
+			[listIRI, NS.rdf('type'), Namespace("https://fletcher91.github.io/link-redux-todo/")('TodoList'), addGraph(listIRI)],
 			[listIRI, NS.rdf('type'), NS.rdfs('Bag'), addGraph(listIRI)],
 			[listIRI, NS.schema('name'), new Literal("todos"), addGraph(listIRI)],
 			[listIRI, NS.app('completedCount'), Literal.fromValue(1), addGraph(listIRI)],

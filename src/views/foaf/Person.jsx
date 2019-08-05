@@ -1,10 +1,10 @@
 import React from 'react';
-import { NamedNode } from 'rdflib';
+import { NamedNode, Namespace } from 'rdflib'
+import { defaultNS as NS } from 'link-lib'
 import { LinkedResourceContainer, register } from 'link-redux'
 import Link from '../../components/Link'
 import PropertyDisplayRow from '../../components/PropertyDisplayRow'
 
-import { NS } from '../../LRS'
 import PreviewList from '../../topologies/PreviewList'
 
 const styles = {
@@ -61,17 +61,17 @@ const Person = ({
 );
 
 Person.type = NS.foaf('Person');
-
+const vcard = Namespace('http://www.w3.org/2006/vcard/ns#')
 Person.mapDataToProps = {
-  inbox: new NamedNode('http://www.w3.org/ns/ldp#inbox'),
+  inbox: { label: new NamedNode('http://www.w3.org/ns/ldp#inbox')},
   knows: {
     label: NS.foaf('knows'),
     limit: Infinity,
   },
-  name: NS.foaf('name'),
-  hasPhoto: NS.vcard('hasPhoto'),
-  organizationName: NS.vcard('organization-name'),
-  storage: new NamedNode('http://www.w3.org/ns/pim/space#storage'),
+  name: { label: NS.foaf('name')},
+  hasPhoto: { label: vcard('hasPhoto')},
+  organizationName: { label: vcard('organization-name')},
+  storage: { label: new NamedNode('http://www.w3.org/ns/pim/space#storage')},
 }
 
 export default register(Person);

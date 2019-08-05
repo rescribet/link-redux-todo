@@ -5,7 +5,7 @@ import {
 import { NamedNode } from 'rdflib';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Route, Router, Switch } from 'react-router'
+import { Route, Switch } from 'react-router'
 import { BrowserRouter } from 'react-router-dom'
 
 import LRS from './LRS';

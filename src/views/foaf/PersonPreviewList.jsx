@@ -1,8 +1,8 @@
 import React from 'react';
+import { defaultNS as NS } from 'link-lib'
 import { register } from 'link-redux';
 
 import Link from '../../components/Link'
-import { NS } from '../../LRS'
 import { previewListTopology } from '../../topologies/PreviewList'
 
 const styles = {
@@ -20,7 +20,7 @@ PersonPreviewList.type = NS.foaf('Person');
 PersonPreviewList.topology = previewListTopology;
 
 PersonPreviewList.mapDataToProps = {
-  name: NS.foaf('name'),
+  name: {label: NS.foaf('name')},
 }
 
 export default register(PersonPreviewList);

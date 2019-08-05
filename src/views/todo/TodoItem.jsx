@@ -1,9 +1,10 @@
 import classNames from 'classnames';
+import { NamedNode, Namespace } from 'rdflib'
 import { register, useLRS } from 'link-redux'
 import React from 'react';
 import { confirmKeyUpHandler } from '../../helpers/input'
 
-import { NS } from '../../LRS';
+import { DEFAULT_TOPOLOGY, defaultNS as NS } from 'link-lib'
 
 const TodoItem = ({
   completed,
@@ -57,8 +58,16 @@ const TodoItem = ({
   );
 };
 
-TodoItem.type = NS.app('TodoItem');
+TodoItem.type = Namespace("https://fletcher91.github.io/link-redux-todo/")('TodoItem');
 
-TodoItem.mapDataToProps = [NS.schema('text'), NS.app('completed')];
+TodoItem.topology = [
+  undefined,
+  DEFAULT_TOPOLOGY,
+  NamedNode.find("http://localhost:8080/article"),
+  new NamedNode.find("https://ontola-mash.herokuapp.com/article"),
+];
+
+
+TodoItem.mapDataToProps = [NS.schema('text'), Namespace("https://fletcher91.github.io/link-redux-todo/")('completed')];
 
 export default register(TodoItem);

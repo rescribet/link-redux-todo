@@ -36,7 +36,7 @@ app.LRS.api.registerTransformer(
  */
 app.LRS.addOntologySchematics([
 	new Statement(NS.rdfs('Bag'), NS.rdfs('subClassOf'), NS.rdfs('Resource')),
-	new Statement(NS.app('TodoList'), NS.rdfs('subClassOf'), NS.rdfs('Bag')),
+	new Statement(Namespace("https://fletcher91.github.io/link-redux-todo/")('TodoList'), NS.rdfs('subClassOf'), NS.rdfs('Bag')),
 ])
 app.LRS.api.accept.default = "text/turtle"
 

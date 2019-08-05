@@ -20,7 +20,7 @@ const chainMiddleware = (store) => {
    * Middleware handler
    */
   return next => (iri, opts) => {
-    if (!iri.value.startsWith(NS.app('todo/').value)) {
+    if (!iri.value.startsWith(store.namespaces.app('todo/').value)) {
       return next(iri, opts);
     }
 
