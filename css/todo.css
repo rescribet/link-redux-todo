@@ -29,19 +29,19 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.Button {
+.todoapp .Button {
     background: rgba(0, 0, 0, 0.054);
     cursor: pointer;
     margin: 0 .5em;
     padding: 1.0em;
 }
 
-.TodoMessage {
+.todoapp .TodoMessage {
     padding: 10px;
     text-align: center;
 }
 
-.info {
+.todoapp .info {
     color: #737373;
 }
 
@@ -55,14 +55,14 @@
 }
 
 /* From https://loading.io/css/ */
-.lds-ring {
+.todoapp .lds-ring {
     display: flex;
     position: relative;
     margin: auto;
     width: 64px;
     height: 64px;
 }
-.lds-ring div {
+.todoapp .lds-ring div {
     box-sizing: border-box;
     display: block;
     position: absolute;
@@ -92,19 +92,19 @@
     }
 }
 
-.footer {
+.todoapp .footer {
     display: flex;
     flex-direction: row-reverse;
     height: auto;
     padding: 0;
 }
 
-.clear-completed {
+.todoapp .clear-completed {
     padding: .8em;
     z-index: 1;
 }
 
-.save-pod {
+.todoapp .save-pod {
     background: #7C4DFF;
     color: white;
     cursor: pointer;
@@ -112,14 +112,14 @@
     z-index: 1;
 }
 
-.BrowserList {
+.todoapp .BrowserList {
     padding: 0;
 }
 
-.BrowserList li:nth-child(odd){
+.todoapp .BrowserList li:nth-child(odd){
     background-color: #dadada66;
 }
 
-.PreviewList {
+.todoapp .PreviewList {
     margin: 1em;
 }
