@@ -9,4 +9,4 @@
     a rd:Class, ll:InstallableComponent;
     schem:name "Demo TODO app";
     ll:npmLabel "link-redux-todomvc";
-    ll:npmVersion "2.1.22".
+    ll:npmVersion "2.13.0".
