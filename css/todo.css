@@ -1,4 +1,4 @@
-.TodoList {
+.TodoList-Main {
     font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
     line-height: 1.4em;
     color: #4d4d4d;
@@ -48,6 +48,10 @@
 .todoapp h1 {
     color: rgba(175, 47, 47, 0.25);
     white-space: nowrap;
+}
+
+.todoapp header.header {
+    display: none;
 }
 
 /* From https://loading.io/css/ */
