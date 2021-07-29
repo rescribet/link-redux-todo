@@ -8,12 +8,14 @@ import ReactDOM from 'react-dom';
 
 import LRS from './LRS';
 
+import MotivationalMessage from './views/MotivationalMessage';
 import TodoItem from './views/todoItem';
 import TodoList from './views/TodoList';
 
 LRS.registerAll([
+	...MotivationalMessage,
 	...TodoItem,
-	...TodoList,
+	...TodoList
 ]);
 
 app.ALL_TODOS = 'all';

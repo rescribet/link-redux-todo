@@ -94,9 +94,23 @@ const todoMiddleware = (store) => {
 		const completed = store.getResourceProperty(subject, NS.app('completed'));
 
 		const next = rdf.literal(completed.value === "false");
-		return [
-			[subject, NS.app('completed'), next, replace],
-		];
+		if (next.value === "true") 	{
+			return [
+				[subject, rdfx.type, NS.app('MotivationalMessage'), replace],
+				[subject, schema.text, rdf.literal(randomPositiveMessage()), replace]
+			]
+		}
+		
+		else {
+			return [
+				[subject, NS.app('completed'), next, replace],
+			];
+		}
+	};
+
+	const randomPositiveMessage = () => {
+		const messages = ["Well Done!", "Good Job!", "Nice Work!", "Great!", "Keep It Up!", "Proud Of You!"];		
+		return messages[Math.floor(Math.random()*messages.length)];
 	};
 
 	// We don't have a purge commando in the delta system yet, so we have to collect and remove
