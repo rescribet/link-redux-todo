@@ -1,11 +1,17 @@
-import { LinkedResourceContainer, register, useLRS } from 'link-redux'
+import rdfs from '@ontologies/rdfs'
+import schema from '@ontologies/schema'
+import { Resource, register, useLRS, useProperty } from 'link-redux'
 import React from 'react';
 
 import { NS } from '../LRS'
 
 const ENTER_KEY = 13;
 
-const TodoList = ({ completedCount, member, name }) => {
+const TodoList = () => {
+	const [completedCount] = useProperty(NS.app('completedCount'));
+	const member = useProperty(rdfs.member);
+	const [name] = useProperty(schema.name);
+
 	const lrs = useLRS();
 
 	let clearButton = null;
@@ -44,7 +50,7 @@ const TodoList = ({ completedCount, member, name }) => {
 			/>
 			<ul className="todo-list">
 				{member.map(subject => (
-					<LinkedResourceContainer key={`todo-list-${subject.value}`} subject={subject} />
+					<Resource key={`todo-list-${subject.value}`} subject={subject} />
 				))}
 			</ul>
 			<footer className="footer">
@@ -58,14 +64,5 @@ const TodoList = ({ completedCount, member, name }) => {
 };
 
 TodoList.type = NS.app('TodoList');
-
-TodoList.mapDataToProps = {
-	completedCount: NS.app('completedCount'),
-	member: {
-		label: NS.rdfs('member'),
-		limit: Infinity, // We want all members
-	},
-	name: NS.schema('name'),
-};
 
 export default register(TodoList);

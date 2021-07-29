@@ -1,11 +1,9 @@
-import { defaultNS } from 'link-lib'
-import {
-	BlankNode,
-	Literal,
-	NamedNode,
-	Namespace,
-	Statement,
-} from 'rdflib'
+import rdf, { createNS } from '@ontologies/core'
+import owl from '@ontologies/owl'
+import rdfx from '@ontologies/rdf'
+import rdfs from '@ontologies/rdfs'
+import schema from '@ontologies/schema'
+
 import { NS } from '../LRS'
 
 /**
@@ -15,8 +13,11 @@ import { NS } from '../LRS'
  *
  * @see https://github.com/ontola/linked-delta for definitions (they're pretty obvious though).
  */
-const add = defaultNS.ll('add');
-const replace = defaultNS.ll('replace');
+
+const ll = createNS("http://purl.org/link-lib/");
+const add = ll('add');
+const replace = ll('replace');
+const meta = ll('meta');
 
 // We build IRI's manually here, but real-world would abstract this into the data via declarative forms.
 function actionIRI(subject, action, payload = {}) {
@@ -31,11 +32,11 @@ function actionIRI(subject, action, payload = {}) {
 const todoMiddleware = (store) => {
 	// Register our namespace, this will contain app-specific models (we could use any RDF todo model,
 	// but this is a demo, so keep it simple). See the webpack config for the value.
-	store.namespaces.app = new Namespace(FRONTEND_ROUTE);
+	store.namespaces.app = createNS(FRONTEND_ROUTE);
 	const NS = store.namespaces;
 
 	store.addOntologySchematics([
-		new Statement(NS.app('#/'), NS.owl('sameAs'), NS.app('/')),
+		rdf.quad(NS.app('#/'), owl.sameAs, NS.app('/')),
 	]);
 
 	const processDeltaNow = (delta) => {
@@ -45,49 +46,54 @@ const todoMiddleware = (store) => {
 	// Since we don't have a server, we create our own data by mocking the initial response.
 	store.processDelta([
 		// Homepage
-		[NS.app('#/'), NS.rdf('type'), NS.app('TodoList'), add],
-		[NS.app('#/'), NS.rdf('type'), NS.rdfs('Bag'), add],
-		[NS.app('#/'), NS.schema('name'), new Literal("todos"), add],
-		[NS.app('#/'), NS.app('completedCount'), Literal.fromValue(1), add],
-		[NS.app('#/'), NS.rdfs('member'), NS.app('todos/1'), add],
-		[NS.app('#/'), NS.rdfs('member'), NS.app('todos/2'), add],
-		[NS.app('#/'), NS.schema('potentialAction'), NS.app('actions/new'), add],
+		[NS.app('#/'), rdf.namedNode("http://www.w3.org/2011/http#statusCode"), rdf.literal(200), meta],
+		[NS.app('#/'), rdfx.type, NS.app('TodoList'), add],
+		[NS.app('#/'), rdfx.type, rdfs.Bag, add],
+		[NS.app('#/'), schema.name, rdf.literal("todos"), add],
+		[NS.app('#/'), NS.app('completedCount'), rdf.literal(1), add],
+		[NS.app('#/'), rdfs.member, NS.app('todos/1'), add],
+		[NS.app('#/'), rdfs.member, NS.app('todos/2'), add],
+		[NS.app('#/'), schema.potentialAction, NS.app('actions/new'), add],
 
 		// Create action
-		[NS.app('actions/new'), NS.rdf('type'), NS.schema('CreateAction'), add],
-		[NS.app('actions/new'), NS.schema('object'), NS.app('actions/new/entry'), add],
+		[NS.app('actions/new'), rdf.namedNode("http://www.w3.org/2011/http#statusCode"), rdf.literal(200), meta],
+		[NS.app('actions/new'), rdfx.type, schema.CreateAction, add],
+		[NS.app('actions/new'), schema.object, NS.app('actions/new/entry'), add],
 
-		[NS.app('actions/new/entry'), NS.rdf('type'), NS.schema('EntryPoint'), add],
-		[NS.app('actions/new/entry'), NS.schema('httpMethod'), new Literal('POST'), add],
-		[NS.app('actions/new/entry'), NS.schema('urlTemplate'), new Literal('EntryPoint'), add],
+		[NS.app('actions/new/entry'), rdf.namedNode("http://www.w3.org/2011/http#statusCode"), rdf.literal(200), meta],
+		[NS.app('actions/new/entry'), rdfx.type, schema.EntryPoint, add],
+		[NS.app('actions/new/entry'), schema.httpMethod, rdf.literal('POST'), add],
+		[NS.app('actions/new/entry'), schema.urlTemplate, rdf.literal('EntryPoint'), add],
 
 		// First todo
-		[NS.app('todos/1'), NS.rdf('type'), NS.app('TodoItem'), add],
-		[NS.app('todos/1'), NS.schema('text'), new Literal('Something to do'), add],
-		[NS.app('todos/1'), NS.app('completed'), Literal.fromValue(false), add],
+		[NS.app('todos/1'), rdf.namedNode("http://www.w3.org/2011/http#statusCode"), rdf.literal(200), meta],
+		[NS.app('todos/1'), rdfx.type, NS.app('TodoItem'), add],
+		[NS.app('todos/1'), schema.text, rdf.literal('Something to do'), add],
+		[NS.app('todos/1'), NS.app('completed'), rdf.literal(false), add],
 
 		// Second todo
-		[NS.app('todos/2'), NS.rdf('type'), NS.app('TodoItem'), add],
-		[NS.app('todos/2'), NS.schema('text'), new Literal('This has been done'), add],
-		[NS.app('todos/2'), NS.app('completed'), Literal.fromValue(true), add],
+		[NS.app('todos/2'), rdf.namedNode("http://www.w3.org/2011/http#statusCode"), rdf.literal(200), meta],
+		[NS.app('todos/2'), rdfx.type, NS.app('TodoItem'), add],
+		[NS.app('todos/2'), schema.text, rdf.literal('This has been done'), add],
+		[NS.app('todos/2'), NS.app('completed'), rdf.literal(true), add],
 	]);
 
 	// Normally, we'd define functions that transition our _application state_ here (dialogs, modals,
 	// etc), but we'll implement the transitions the server would normally return (why implement logic twice?).
 	const createTODO = (text) => {
-		const newTodo = new BlankNode();
+		const newTodo = rdf.blankNode();
 		return [
-			[newTodo, NS.rdf('type'), NS.app('TodoItem'), add],
-			[newTodo, NS.schema('text'), new Literal(text), add],
-			[newTodo, NS.app('completed'), Literal.fromValue(false), add],
-			[NS.app('#/'), NS.rdfs('member'), newTodo, add],
+			[newTodo, rdfx.type, NS.app('TodoItem'), add],
+			[newTodo, schema.text, rdf.literal(text), add],
+			[newTodo, NS.app('completed'), rdf.literal(false), add],
+			[NS.app('#/'), rdfs.member, newTodo, add],
 		];
 	};
 
 	const toggleCompleted = (subject) => {
 		const completed = store.getResourceProperty(subject, NS.app('completed'));
 
-		const next = Literal.fromValue(completed.value === '0');
+		const next = rdf.literal(completed.value === "false");
 		return [
 			[subject, NS.app('completed'), next, replace],
 		];
@@ -96,14 +102,13 @@ const todoMiddleware = (store) => {
 	// We don't have a purge commando in the delta system yet, so we have to collect and remove
 	// the statements manually for now.
 	const removeTODO = (subject) => {
-		const data = store.store.statementsFor(subject);
-		data.push(...store.store.match(null, null, subject)); // Also remove references to this todo.
-		store.store.removeStatements(data);
+		store.store.removeQuads(store.store.match(null, null, subject));
+		store.removeResource(subject);
 		store.broadcastWithExpedite(true);
 	};
 
 	const updateText = (subject, text) => [
-			[subject, NS.schema('text'), Literal.fromValue(text), replace],
+			[subject, schema.text, rdf.literal(text), replace],
 	];
 
 	/**
@@ -139,16 +144,10 @@ const todoMiddleware = (store) => {
 		 * we're manipulating the store directly (hence the break in the law of demeter `store.store.x`)
 		 */
 		if (iri.value.startsWith(NS.app('todo/clearComplete').value)) {
-			const completed = store
+			store
 				.store
-				.match(null, NS.app('completed'), Literal.fromValue(true)) // Match every completed resource
-
-			completed
-				.map((stmt) => store.store.statementsFor(stmt.subject)) // Get the resources
-				.map((todo) => store.store.removeStatements(todo)); // Remove the data
-			completed
-				.map((stmt) => store.store.match(null, NS.rdfs('member'), stmt.subject)) // Get property occurrences of the resource
-				.map((stmts) => store.store.removeStatements(stmts));
+				.match(null, NS.app('completed'), rdf.literal(true)) // Match every completed resource
+				.forEach((todo) => removeTODO(todo.subject));
 
 			return store.broadcastWithExpedite(); // Render the changes
 		}
@@ -156,7 +155,7 @@ const todoMiddleware = (store) => {
 			// IRI (internationalized resource identifier), somewhat like 'the newer version of URL'.
 		const iriString = new URL(iri.value).searchParams.get('iri');
 		// We need to make this an instance of NamedNode, only required when parsing strings manually
-		const subject = iriString.includes(':') ? NamedNode.find(iriString) : new BlankNode(iriString);
+		const subject = iriString.includes(':') ? rdf.namedNode(iriString) : rdf.blankNode(iriString);
 
 
 		if (iri.value.startsWith(NS.app('todo/remove').value)) {
