@@ -1,8 +1,8 @@
+import rdf from '@ontologies/core';
 import {
-	LinkedResourceContainer,
+	Resource,
 	RenderStoreProvider,
 } from 'link-redux';
-import { NamedNode } from 'rdflib';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -20,15 +20,11 @@ app.ALL_TODOS = 'all';
 app.ACTIVE_TODOS = 'active';
 app.COMPLETED_TODOS = 'completed';
 
-class TodoApp extends React.Component {
-	render() {
-		return (
-			<RenderStoreProvider value={LRS} >
-				<LinkedResourceContainer subject={NamedNode.find(window.location.href)} />
-			</RenderStoreProvider>
-		);
-	}
-}
+const TodoApp = () => (
+	<RenderStoreProvider value={LRS} >
+		<Resource subject={rdf.namedNode(window.location.href)} />
+	</RenderStoreProvider>
+);
 
 history.pushState(undefined, undefined, '#/');
 

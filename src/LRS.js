@@ -1,3 +1,4 @@
+import enableDevtools from '@ontola/link-devtools'
 import { createStore } from 'link-lib'
 
 import logging from './middleware/logging'
@@ -13,6 +14,7 @@ app.LRS = createStore({}, [
 	logging(),
 	todoMiddleware,
 ]);
+enableDevtools(app.LRS);
 
 export const NS = app.LRS.namespaces;
 
